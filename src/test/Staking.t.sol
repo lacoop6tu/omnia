@@ -123,7 +123,7 @@ contract StakingTest is Test {
     }
 
     function test_3_users_flow() public {
-          // Adding rewards (admin)
+        // Adding rewards (admin)
         staking.addRewards(100 ether);
 
         // Users stake
