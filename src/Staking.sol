@@ -91,7 +91,7 @@ contract Staking is Ownable, ReentrancyGuard {
     }
 
     /// @notice Claim all Available yield, there must be enough rewards added by the admin for distributing the yield
-    function claim_yield() external nonReentrant {
+    function claimYield() external nonReentrant {
         uint256 amount = _claim();
 
         token.safeTransfer(msg.sender, amount);
@@ -109,7 +109,7 @@ contract Staking is Ownable, ReentrancyGuard {
     }
 
     /// @notice Withdraw all amount staked if lock expired and also claims all available yield (if enough rewards)
-    function withdraw_and_claim() external nonReentrant {
+    function withdrawAndClaim() external nonReentrant {
         uint256 withdrawAmount = _withdraw();
         uint256 yieldAmount = _claim();
 

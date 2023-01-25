@@ -78,7 +78,7 @@ contract StakingTest is Test {
 
         // Staker claims yield
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
         (amount, , , , ) = staking.deposits(staker1);
         assertEq(amount, stakeAmount);
         assertEq(omnia.balanceOf(staker1), initialAmount - stakeAmount + yield);
@@ -93,7 +93,7 @@ contract StakingTest is Test {
         vm.warp(block.timestamp + 30 days);
 
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
         assertEq(
             omnia.balanceOf(staker1),
             initialAmount - stakeAmount + 3 * yield
@@ -118,7 +118,7 @@ contract StakingTest is Test {
         vm.warp(block.timestamp + 30 days);
 
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
         assertEq(omnia.balanceOf(staker1), initialAmount + 4 * yield);
     }
 
@@ -163,7 +163,7 @@ contract StakingTest is Test {
 
         // User1 claims all yield available
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
         (, , uint256 availableYield,uint256 lockedYield , ) = staking.deposits(staker1);
         assertEq(availableYield,0);
         assertEq(lockedYield,0);
@@ -178,7 +178,7 @@ contract StakingTest is Test {
         
         // user3 exits and withdraws stake and available yield
         vm.prank(staker3);
-        staking.withdraw_and_claim();
+        staking.withdrawAndClaim();
         uint256 lastTimeUpdate;
         uint256 lockedUntil;
         (amount, lockedUntil,availableYield,lockedYield, lastTimeUpdate) = staking.deposits(staker3);
@@ -201,7 +201,7 @@ contract StakingTest is Test {
 
         // User3 exits and withdraws stake and available yield (ALL yield is available in this case)
         vm.prank(staker3);
-        staking.withdraw_and_claim();
+        staking.withdrawAndClaim();
         (amount, lockedUntil,availableYield,lockedYield, lastTimeUpdate) = staking.deposits(staker3);
         assertEq(amount,0);
         assertEq(lockedUntil,0);
@@ -226,7 +226,7 @@ contract StakingTest is Test {
         assertEq(omnia.balanceOf(staker1),initialAmount + yield1);
 
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
         (,,availableYield,lockedYield,) = staking.deposits(staker1);
         assertEq(availableYield,0); 
         assertEq(lockedYield,0); 
@@ -237,7 +237,7 @@ contract StakingTest is Test {
         vm.warp(block.timestamp + 90 days);
 
         vm.prank(staker2);
-        staking.withdraw_and_claim();
+        staking.withdrawAndClaim();
 
         // User2 collected all together
         assertEq(omnia.balanceOf(staker2),initialAmount + 4 *yield2);
@@ -252,7 +252,7 @@ contract StakingTest is Test {
 
         // No rewards available
         vm.expectRevert(Staking.Error__Nothing_to_claim.selector);
-        staking.claim_yield();
+        staking.claimYield();
 
         // Stake more than 365 days
         vm.expectRevert(Staking.Error__Lock_too_long.selector);
@@ -289,7 +289,7 @@ contract StakingTest is Test {
         vm.startPrank(staker1);
         // User has nothing to claim yet (28 days have not passed)
         vm.expectRevert(Staking.Error__Nothing_to_claim.selector);
-        staking.claim_yield();
+        staking.claimYield();
 
         // Cannot withdraw yet
         vm.expectRevert(Staking.Error__Cannot_withdraw_yet.selector);
@@ -297,14 +297,14 @@ contract StakingTest is Test {
 
         // Cannot use withdraw and claim yet
         vm.expectRevert(Staking.Error__Cannot_withdraw_yet.selector);
-        staking.withdraw_and_claim();
+        staking.withdrawAndClaim();
 
         // We advanced when they are unlocked
         vm.warp(block.timestamp + 28 days);
 
         // User cannot get reward because there's no reward available
         vm.expectRevert(Staking.Error__No_rewards_available.selector);
-        staking.claim_yield();
+        staking.claimYield();
 
         vm.stopPrank();
 
@@ -314,13 +314,13 @@ contract StakingTest is Test {
         // User cannot get reward because there's not enough reward available
         vm.expectRevert(Staking.Error__Not_enough_rewards_available.selector);
         vm.prank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
 
         // we add enough rewards as admin
         staking.addRewards(40 ether);
 
         vm.startPrank(staker1);
-        staking.claim_yield();
+        staking.claimYield();
 
         assertEq(staking.availableRewards(), 30 ether);
         assertEq(omnia.balanceOf(staker1), 950 ether);
