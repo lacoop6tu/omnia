@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {Staking} from "../src/Staking.sol";
+import {Staking} from "../Staking.sol";
 import {ERC20} from "openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -145,6 +145,7 @@ contract StakingTest is Test {
         (amount, , , , ) = staking.deposits(staker3);
         assertEq(amount, stakeAmount3);
 
+        // Admin updates corresponding yields
         users.push(staker1);
         users.push(staker2);
         users.push(staker3);
@@ -240,8 +241,6 @@ contract StakingTest is Test {
 
         // User2 collected all together
         assertEq(omnia.balanceOf(staker2),initialAmount + 4 *yield2);
-
-
     }
 
     function test_errors() public {
@@ -274,6 +273,7 @@ contract StakingTest is Test {
         // USER STAKES
         staking.stake(100 ether, 180 days);
 
+        // Attemp to re-stake with active deposit
         vm.expectRevert(Staking.Error__Already_staked.selector);
         staking.stake(30 ether, 60 days);
 
